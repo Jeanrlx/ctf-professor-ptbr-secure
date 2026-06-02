@@ -17,10 +17,16 @@ O CTF Professor foi criado exclusivamente para **Educação e Pesquisa de Segura
 
 ### 🐳 2. Segurança do Ambiente (Sandbox)
 
-Para proteger seu computador principal (Host), o CTF Professor utiliza um **Sandbox Docker (Kali Linux)**.
+Para proteger seu computador principal (Host), o CTF Professor utiliza um **Sandbox Docker (Kali Linux)** com as seguintes proteções:
 
--   **Isolamento**: Sempre prefira executar binários suspeitos e ferramentas de scan (`nmap`, `sqlmap`, exploits) dentro do container.
--   **Volumes**: Lembre-se que a pasta do projeto é montada como um volume. Arquivos maliciosos escritos no diretório `/workspace` dentro do container aparecerão no seu host. **Tenha cautela.**
+-   **Usuário não-root**: O container roda como `ctfuser`. Apenas ferramentas que genuinamente precisam de privilégios (`nmap`, `openvpn`, `gdb`, `strace`) têm acesso via `sudo` com allowlist explícita.
+-   **Perfil seccomp customizado**: O container usa um perfil seccomp em `.agent/sandbox/seccomp-ctf.json` que bloqueia syscalls de escape de container (`mount`, `unshare`, `setns`, `kexec_load`, `bpf`, etc.). O modo `seccomp=unconfined` **não é usado**.
+-   **Capabilities mínimas**: O container inicia com `--cap-drop=ALL` e adiciona apenas `NET_RAW`, `NET_ADMIN` e `SYS_PTRACE` conforme necessidade de ferramentas CTF.
+-   **Filesystem read-only**: Root filesystem montado como read-only. Escrita permitida somente em `/workspace` e `/tmp` (tmpfs).
+-   **Validação de comandos**: Toda string de comando é validada contra uma blocklist de padrões perigosos antes de ser passada para `docker exec`. Comandos com `nsenter`, `--privileged`, redirecionamento para `/dev/sd*`, pipes para shell remoto, etc., são rejeitados.
+-   **Rate limiting no MCP**: O servidor MCP limita a 20 chamadas por 60 segundos para evitar abuso.
+-   **Isolamento**: Sempre prefira executar binários suspeitos e ferramentas de scan dentro do container.
+-   **Volumes**: Lembre-se que a pasta do projeto é montada como um volume. Arquivos maliciosos escritos em `/workspace` dentro do container aparecerão no seu host. **Tenha cautela.**
 -   **Rede**: O container tem acesso à rede para desafios remotos, mas está em uma rede `bridge` isolada da sua rede local (LAN).
 
 ### 🔑 3. Gestão de Credenciais e Segredos
@@ -51,10 +57,16 @@ CTF Professor is created strictly for **Education and Security Research**. Using
 
 ### 🐳 2. Environment Security (Sandbox)
 
-To protect your main computer (Host), CTF Professor utilizes a **Docker Sandbox (Kali Linux)**.
+To protect your main computer (Host), CTF Professor utilizes a **Docker Sandbox (Kali Linux)** with the following hardening:
 
--   **Isolation**: Always prefer executing suspicious binaries and scanning tools (`nmap`, `sqlmap`, exploits) inside the container.
--   **Volumes**: Remember that the project folder is mounted as a volume. Malicious files written to the `/workspace` directory inside the container will appear on your host. **Exercise caution.**
+-   **Non-root user**: The container runs as `ctfuser`. Only tools that genuinely need privileges (`nmap`, `openvpn`, `gdb`, `strace`) have access via an explicit sudo allowlist.
+-   **Custom seccomp profile**: The container uses `.agent/sandbox/seccomp-ctf.json`, which blocks container-escape syscalls (`mount`, `unshare`, `setns`, `kexec_load`, `bpf`, etc.). `seccomp=unconfined` is **not used**.
+-   **Minimal capabilities**: Container starts with `--cap-drop=ALL` and re-adds only `NET_RAW`, `NET_ADMIN`, `SYS_PTRACE` as required by CTF tools.
+-   **Read-only filesystem**: Root filesystem is read-only. Writes are allowed only to `/workspace` and `/tmp` (tmpfs).
+-   **Command validation**: Every command string is checked against a blocklist of dangerous patterns before being passed to `docker exec`. Commands containing `nsenter`, `--privileged`, redirections to `/dev/sd*`, remote shell pipes, etc., are rejected.
+-   **MCP rate limiting**: The MCP server is limited to 20 calls per 60 seconds to prevent abuse.
+-   **Isolation**: Always prefer executing suspicious binaries and scanning tools inside the container.
+-   **Volumes**: Remember that the project folder is mounted as a volume. Malicious files written to `/workspace` inside the container will appear on your host. **Exercise caution.**
 -   **Networking**: The container has network access for remote challenges but is on a `bridge` network isolated from your local network (LAN).
 
 ### 🔑 3. Credential & Secret Management

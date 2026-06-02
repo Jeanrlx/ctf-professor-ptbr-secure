@@ -163,56 +163,81 @@ class InstallSetup:
         else:
             logger.info('   export EDITOR="notepad++"')
 
+    @staticmethod
+    def _sanitize_env_value(value: str) -> str:
+        """
+        Strip characters that could break .env parsing or enable injection.
+        Newlines and null bytes are the most dangerous: a value containing '\n'
+        would let an attacker write arbitrary additional keys into the file.
+        """
+        # Remove null bytes and newline characters entirely
+        sanitized = value.replace('\x00', '').replace('\n', '').replace('\r', '')
+        # Reject values that are suspiciously long (token/cookie max ~512 chars)
+        if len(sanitized) > 512:
+            raise ValueError(f"Value is too long ({len(sanitized)} chars). Max 512.")
+        return sanitized
+
     def setup_ctf_platforms(self):
         """Guide the user through linking CTF platforms."""
         env_path = self.project_root / ".env"
-        
+
+        # Validate env_path stays inside project root (prevent path traversal)
+        try:
+            env_path.resolve().relative_to(self.project_root.resolve())
+        except ValueError:
+            logger.error("Attempted path traversal detected for .env path. Aborting.")
+            return False
+
         logger.info("\n--- CTF Platform Connection (Optional) ---")
         logger.info("Linking your accounts enables automated challenge intake and flag submission.")
-        
+
         platforms = {
             "1": ("CTFd", ["CTFD_URL", "CTFD_TOKEN"]),
             "2": ("HackTheBox", ["HTB_TOKEN"]),
             "3": ("TryHackMe", ["THM_SESSION_SID"])
         }
-        
+
         logger.info("Available Platforms:\n1. CTFd\n2. HackTheBox\n3. TryHackMe\n4. Skip")
         choice = input("Select a platform to link (or 4 to skip): ")
-        
+
         if choice in platforms:
             name, keys = platforms[choice]
             logger.info(f"\nConfiguring {name}...")
-            
-            # Guide the user
+
             if name == "CTFd":
                 logger.info("Hint: Generate an Access Token in /settings > Access Tokens.")
             elif name == "HackTheBox":
                 logger.info("Hint: Find your App Token in Profile Settings > App Tokens.")
             elif name == "TryHackMe":
                 logger.info("Hint: Copy the 'connect.sid' cookie from your browser after logging in.")
-            
+
             env_content = []
             if env_path.exists():
                 with open(env_path, 'r') as f:
                     env_content = f.readlines()
-            
+
             new_values = {}
             for key in keys:
-                val = input(f"Enter {key}: ")
+                val = input(f"Enter {key}: ").strip()
                 if val:
-                    new_values[key] = val
-            
-            # Update .env
+                    try:
+                        new_values[key] = self._sanitize_env_value(val)
+                    except ValueError as e:
+                        logger.error(f"Invalid value for {key}: {e}")
+                        return False
+
+            # Write atomically: build full content first, then write once
+            lines_out = []
+            for line in env_content:
+                if '=' in line:
+                    k = line.split('=')[0].strip()
+                    if k not in new_values:
+                        lines_out.append(line)
+            for k, v in new_values.items():
+                lines_out.append(f"{k}={v}\n")
+
             with open(env_path, 'w') as f:
-                # Keep existing values not being updated
-                for line in env_content:
-                    if '=' in line:
-                        k = line.split('=')[0]
-                        if k not in new_values:
-                            f.write(line)
-                # Write new values
-                for k, v in new_values.items():
-                    f.write(f"{k}={v}\n")
+                f.writelines(lines_out)
             
             logger.info(f"✅ {name} configuration saved to .env")
             

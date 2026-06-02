@@ -1,7 +1,6 @@
 FROM kalilinux/kali-rolling
 
-# Update and install foundational tools required by agents
-# Using DEBIAN_FRONTEND=noninteractive to prevent prompts during build
+# Install tools required for CTF challenge solving
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     nmap \
@@ -20,16 +19,22 @@ RUN apt-get update && \
     ltrace \
     iproute2 \
     openvpn \
+    sudo \
     && rm -rf /var/lib/apt/lists/*
 
-# Add a non-root user for executing non-privileged commands, if necessary.
-# However, CTF agents often need root for tools like nmap OS detection or openvpn.
-# We'll stick to root by default, but rely on Docker isolation (--cap-drop, --network=none).
+# Create a non-root user for command execution.
+# Tools that genuinely need root (nmap OS detection, openvpn) are granted via
+# a narrow sudoers entry rather than running everything as root.
+RUN useradd -m -s /bin/bash ctfuser && \
+    echo "ctfuser ALL=(root) NOPASSWD: /usr/bin/nmap, /usr/sbin/openvpn, /usr/bin/gdb, /usr/bin/strace" \
+    >> /etc/sudoers.d/ctfuser && \
+    chmod 0440 /etc/sudoers.d/ctfuser
 
-# Set the primary working directory.
-# This matches where the host volume will be mounted (-v $PWD:/workspace)
+# Pre-create workspace with correct ownership so volume mounts work without root
+RUN mkdir -p /workspace && chown ctfuser:ctfuser /workspace
+
 WORKDIR /workspace
 
-# A simple sleep loop keeps the container running indefinitely
-# so the agent can execute commands dynamically via `docker exec`.
+USER ctfuser
+
 CMD ["sleep", "infinity"]

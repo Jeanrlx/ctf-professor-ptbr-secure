@@ -43,7 +43,12 @@ apps/web-app/public/skills.json
 .env
 .env.local
 .env.*
+!.env.example
 mcp_config.json
+
+# Seccomp profile may contain host-specific paths — keep it local
+# (the committed version in .agent/sandbox/ is the canonical template)
+seccomp-ctf.local.json
 
 # Local Challenge Workspace
 # We ignore everything inside CTFs/ to prevent leaking challenge binaries, 
