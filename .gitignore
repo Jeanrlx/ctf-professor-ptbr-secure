@@ -37,6 +37,9 @@ validation-baseline.json
 apps/web-app/public/skills/
 apps/web-app/public/skills.json
 
+# Claude Code — commitar settings.json (tem o MCP config), mas não dados locais
+.claude/todos.json
+
 # --- CTF Professor Specific ---
 
 # Security: Never commit environment variables and secrets

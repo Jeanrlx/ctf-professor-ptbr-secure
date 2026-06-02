@@ -47,8 +47,7 @@ $ARGUMENTS
 
 1. **Verifique** editores de texto e hexadecimais locais essenciais (Notepad++, ImHex/HxD, CyberChef).
 2. **Sugira Instalação:** Se o usuário não os tiver, o script fornecerá links de download ou comandos `winget`.
-3. **Configure o Editor:** Guie o usuário para definir seu editor padrão do Gemini CLI (variável de ambiente `EDITOR`).
-4. **Salve o Estado:** Registre as ferramentas instaladas no `.env` para que os agentes possam fornecer dicas contextuais.
+3. **Salve o Estado:** Registre as ferramentas instaladas no `.env` para que os agentes possam fornecer dicas contextuais.
 
 ### Passo 7: Conexão com Plataformas de CTF (Opcional)
 

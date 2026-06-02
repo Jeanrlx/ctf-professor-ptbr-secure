@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "ctf-sandbox": {
+      "command": "python",
+      "args": [".agent/scripts/sandbox_mcp.py"],
+      "description": "Sandbox Docker Kali Linux para execução segura de ferramentas CTF"
+    }
+  },
+  "permissions": {
+    "allow": [
+      "Bash(python:*)",
+      "Bash(docker:*)",
+      "Read(.agent/*)",
+      "Read(CTFs/*)"
+    ]
+  }
+}
