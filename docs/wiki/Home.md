@@ -4,12 +4,12 @@ O **CTF Professor** é um ecossistema de agentes de IA projetado para transforma
 
 ## 🌟 Filosofia Terminal-First
 
-O CTF Professor foi desenhado para ser operado via **Gemini CLI**. Acreditamos que o terminal é o ambiente natural do analista de segurança. Sem menus ou distrações, você tem acesso direto aos agentes e às ferramentas do sandbox.
+O CTF Professor foi desenhado para ser operado via **Claude Code**. Acreditamos que o terminal é o ambiente natural do analista de segurança. Sem menus ou distrações, você tem acesso direto aos agentes e às ferramentas do sandbox.
 
 ## 🚀 O que este sistema faz por você?
 
 - **Ensina através do Método Socrático**: O professor faz as perguntas certas para que você descubra a solução.
-- **Leve e Poderoso via Gemini CLI**: Interação textual rápida e eficiente.
+- **Leve e Poderoso via Claude Code**: Interação textual rápida e eficiente, sem dependências externas.
 - **Ambiente Isolado (Sandbox)**: Roda todas as ferramentas pesadas dentro de um container Kali Linux.
 - **Especialistas para cada Domínio**: 18 agentes especializados em Web, Pwn, Crypto, Forensics, Malware e mais.
 - **Bilíngue por Padrão**: Detecção automática de Português (PT-BR) e Inglês (EN).

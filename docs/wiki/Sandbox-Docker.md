@@ -20,8 +20,11 @@ O sistema de orquestração (`sandbox_manager.py`) utiliza várias flags de segu
 
 - **Rede Bridge**: O container tem acesso à internet para desafios que exigem conexão externa, mas está isolado da sua rede local (LAN).
 - **Capacidades Específicas**: Habilitamos apenas o necessário (`NET_RAW` para nmap, `SYS_PTRACE` para gdb) em vez de rodar o container como `--privileged`.
-- **Seccomp Unconfined**: Permitimos depuração (`ptrace`) para que você possa usar o GDB sem bloqueios do kernel.
-- **Limites de Recursos**: O container é efêmero (`--rm`), o que significa que ele é destruído ao ser parado, garantindo que nenhum resíduo de malware persista entre as sessões.
+- **Perfil Seccomp Customizado**: Em vez de `seccomp=unconfined`, usamos `.agent/sandbox/seccomp-ctf.json` que bloqueia 30+ syscalls de escape de container (`mount`, `unshare`, `setns`, `kexec_load`, `bpf`...) enquanto permite `ptrace` para o GDB funcionar.
+- **Usuário Não-Root**: O container roda como `ctfuser` com sudo restrito apenas a `nmap`, `openvpn`, `gdb` e `strace`. Nenhum processo roda como root por padrão.
+- **Filesystem Read-Only**: O sistema de arquivos raiz é somente leitura. Escrita permitida apenas em `/workspace` e `/tmp` (tmpfs sem exec).
+- **Validação de Comandos**: Toda string de comando é validada contra uma blocklist de 14 padrões perigosos antes de ser enviada ao `docker exec` (proteção contra command injection via prompt injection).
+- **Limites de Recursos**: O container é efêmero (`--rm`), destruído ao ser parado, garantindo que nenhum resíduo de malware persista entre sessões.
 
 ---
 

@@ -1,67 +1,64 @@
-# 🧠 Modelos de IA e Custos (Pro vs Flash)
+# 🧠 Modelos de IA e Custos
 
 O **CTF Professor** utiliza IAs de fronteira (Large Language Models) para analisar binários, interagir com o terminal e atuar como seu mentor socrático. Escolher o modelo certo é a diferença entre uma experiência de aprendizado incrível e horas de frustração.
 
-O Gemini CLI atualmente suporta as gerações mais recentes: **Gemini 3.0** e **Gemini 2.5**.
+Este fork roda via **Claude Code** (Anthropic), suportando os modelos **Claude Sonnet** e **Claude Opus**.
 
 ---
 
-## 🏆 A Regra de Ouro: Use Sempre o Modelo "Pro"
+## 🏆 A Regra de Ouro: Use Sempre o Modelo Mais Capaz Disponível
 
-Para 99% das tarefas de cibersegurança neste projeto, **recomendamos expressamente o uso de modelos da classe "Pro"** (ex: `gemini-3.0-pro` ou `gemini-2.5-pro`).
+Para 99% das tarefas de cibersegurança neste projeto, **recomendamos expressamente o uso de modelos da classe "Sonnet" ou "Opus"**.
 
-### Por que não usar o modelo "Flash" ou "Mini"?
+### Por que não usar modelos menores (Haiku)?
 
-Embora modelos como o *Gemini 2.5 Flash* sejam incrivelmente rápidos e quase gratuitos, eles falham em cenários críticos de segurança:
+Embora modelos menores sejam mais rápidos e baratos, eles falham em cenários críticos de segurança:
 
-1.  **Engenharia Reversa e Pwn**: Modelos menores não conseguem manter o contexto complexo de registradores, *ROP chains* ou leitura de código Assembly profundo.
-2.  **Alucinação de Comandos**: O Flash tende a "inventar" flags de linha de comando que não existem (ex: `nmap --scan-all-vulns`), resultando em erros e perda de tempo no terminal.
-3.  **A Nuance Socrática**: O método de ensino do Professor requer muita sutileza. O modelo precisa saber a resposta, avaliar o que você digitou e responder com uma pergunta que guie seu raciocínio sem entregar a flag de bandeja. Modelos menores estragam a surpresa ou avaliam sua resposta de forma errada.
+1. **Engenharia Reversa e Pwn**: Modelos menores não conseguem manter o contexto complexo de registradores, *ROP chains* ou leitura de código Assembly profundo.
+2. **Alucinação de Comandos**: Modelos pequenos tendem a "inventar" flags de linha de comando que não existem (ex: `nmap --scan-all-vulns`), resultando em erros e perda de tempo.
+3. **A Nuance Socrática**: O método de ensino do Professor requer muita sutileza — avaliar o que você digitou e responder com uma pergunta que guie seu raciocínio sem entregar a flag. Modelos menores estragam a surpresa ou avaliam sua resposta de forma errada.
 
-*Use o Flash apenas se você for processar um log gigante de PCAP (centenas de milhares de linhas) apenas para extração de texto bruto.*
+*Use Haiku apenas para processar logs gigantes (centenas de milhares de linhas) para extração de texto bruto.*
 
 ---
 
-## ⚙️ Como Configurar o Modelo no Gemini CLI
+## ⚙️ Como Configurar o Modelo no Claude Code
 
-Você define qual modelo deseja usar na hora de iniciar o programa no seu terminal.
-
-Se você iniciar apenas com `gemini`, ele pode assumir um modelo padrão (frequentemente o Flash). Para forçar o uso do modelo Pro de última geração (Recomendado), inicie a CLI com a flag `--model`:
+Ao iniciar o Claude Code, o modelo padrão é o **Claude Sonnet** (recomendado para CTF). Para trocar:
 
 ```bash
-gemini --model gemini-3.0-pro
+# Ver modelo atual
+claude /model
+
+# Trocar para Opus (máxima capacidade)
+claude --model claude-opus-4-5
+
+# Trocar para Sonnet (equilíbrio ideal)
+claude --model claude-sonnet-4-5
 ```
 
-*(Dica: Você pode criar um `alias` no seu bashrc/zshrc para não ter que digitar isso toda vez).*
+Ou dentro da sessão ativa, use `/model` para alternar.
 
 ---
 
-## 💰 Custos e Cotas (O que você precisa saber)
+## 💰 Custos e Planos
 
-O uso de IAs através de API tem custos. Aqui está uma visão honesta de como isso impacta seu bolso ao resolver CTFs.
+| Plano | Modelos Disponíveis | Ideal Para |
+|:---|:---|:---|
+| **Claude Free** | Sonnet (limitado) | Estudantes iniciantes |
+| **Claude Pro** (~$20/mês) | Sonnet + Opus sem limite prático | CTF regular, 2-5 desafios/dia |
+| **API (Pay-as-you-go)** | Todos os modelos | Uso programático / automação |
 
-*Nota: Valores baseados nos preços da Google AI Studio no momento da escrita deste documento.*
+### Estimativa por desafio CTF completo (5-8 interações densas)
 
-### Opção 1: Uso Gratuito (Free Tier)
-O Google AI Studio oferece uma cota **gratuita** muito generosa para desenvolvedores:
-*   **Gemini 3.0 Pro** / **Gemini 2.5 Pro**: Até 50 requisições por dia.
-*   **Gemini 2.5 Flash**: Até 1.500 requisições por dia.
+- **Tokens de entrada** (prompt + histórico): ~40.000 tokens
+- **Tokens de saída** (respostas): ~5.000 tokens
+- **Custo Sonnet**: ~$0.18 USD por desafio (~R$ 1,00)
+- **Custo Opus**: ~$0.90 USD por desafio (~R$ 5,00)
 
-**Para estudantes**: A cota de 50 requests/dia do modelo Pro geralmente é mais que suficiente para resolver de 2 a 3 CTFs completos por dia de forma guiada, sem gastar um centavo.
+### Estratégia de Economia
 
-### Opção 2: Usuários Premium (Google One AI Premium / Advanced)
-Se você assina o Google One com acesso aos modelos avançados, você tem acesso prioritário, mas é importante verificar se sua assinatura se estende ao uso da **API de Desenvolvedor**, que muitas vezes é faturada separadamente do uso web (chat no navegador).
-
-### Opção 3: Pay-As-You-Go (Pago pelo uso)
-Se você esgotar a cota gratuita ou precisar de limites maiores corporativos, você pagará por token processado.
-
-*   **Estimativa de um desafio de CTF completo** (aprox. 5 a 8 interações densas):
-    *   *Tokens de Entrada (Prompt + Histórico)*: ~40.000 tokens
-    *   *Tokens de Saída (Respostas)*: ~5.000 tokens
-*   **Custo no Modelo Pro**: ~$0.15 a $0.25 USD por desafio (Cerca de R$ 1,00 a R$ 1,50).
-*   **Custo no Modelo Flash**: ~$0.005 USD por desafio (Praticamente de graça).
-
-**Estratégia de Economia**: Em desafios muito longos, o "histórico" da conversa fica gigante e caro. O sistema cria automaticamente o arquivo `notes.md` na pasta do seu desafio. Se a conversa ficar muito longa, você pode limpar a sessão do CLI e reiniciar apontando para a mesma pasta. A IA lerá o `notes.md` e continuará exatamente de onde você parou, custando muito menos tokens de contexto!
+O sistema cria automaticamente o arquivo `notes.md` na pasta do seu desafio. Se a conversa ficar muito longa e cara, limpe a sessão e reinicie apontando para a mesma pasta — a IA lerá o `notes.md` e continuará exatamente de onde você parou, custando muito menos tokens de contexto.
 
 ---
 

@@ -19,7 +19,7 @@ Para transformar o Notepad++ em uma ferramenta hacker, instale os seguintes plug
 *   **JSON Viewer**: Se você pegar um dump de API de um desafio Web, esse plugin formata o JSON e cria uma árvore lateral para navegação fácil.
 *   **NppCrypt**: Permite criptografar e descriptografar textos selecionados rapidamente com dezenas de algoritmos.
 
-> **Dica Gemini CLI**: Se você usa o Notepad++, pode configurá-lo como o editor padrão do Gemini CLI. No PowerShell (como Administrador), rode: `[Environment]::SetEnvironmentVariable("EDITOR", "C:\Program Files\Notepad++\notepad++.exe", "User")`.
+> **Dica Claude Code**: Se você usa o Notepad++, pode configurá-lo como editor padrão para abertura de arquivos. No PowerShell (como Administrador), rode: `[Environment]::SetEnvironmentVariable("EDITOR", "C:\Program Files\Notepad++\notepad++.exe", "User")`.
 
 ---
 
