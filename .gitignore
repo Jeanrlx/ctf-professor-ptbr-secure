@@ -75,3 +75,17 @@ flag.txt
 flag
 .aider*
 .clinerules
+
+# Audit logs (contain executed commands — never commit)
+.agent/logs/
+*.jsonl
+
+# Environment / secrets
+.env
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python

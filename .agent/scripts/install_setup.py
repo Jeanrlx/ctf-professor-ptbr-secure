@@ -23,7 +23,7 @@ class InstallSetup:
         self.agent_dir = self.project_root / ".agent"
         self.sandbox_dir = self.agent_dir / "sandbox"
         self.image_name = "cyber-ctf-kali"
-        self.required_python_libs = ["mcp", "fastmcp", "pwntools", "requests"]
+        self.required_python_libs = ["mcp", "fastmcp", "requests"]
 
     def check_core_tools(self):
         """Check for core system requirements."""
@@ -95,7 +95,7 @@ class InstallSetup:
         logger.info(f"Installing missing libraries: {', '.join(libs)}...")
         try:
             subprocess.run(
-                [sys.executable, "-m", "pip", "install"] + libs,
+                [sys.executable, "-m", "pip", "install", "--break-system-packages"] + libs,
                 check=True
             )
             return True
@@ -155,15 +155,8 @@ class InstallSetup:
             for k, v in new_env_values.items():
                 f.write(f"{k}={v}\n")
                 
-        # Gemini Editor Tip
-        logger.info("\n🛠️  Gemini CLI Editor Tip:")
-        logger.info("To make Notepad++ your default editor for Gemini CLI, set the EDITOR environment variable:")
-        if sys.platform == "win32":
-            logger.info('   [Environment]::SetEnvironmentVariable("EDITOR", "C:\\Program Files\\Notepad++\\notepad++.exe", "User")')
-        else:
-            logger.info('   export EDITOR="notepad++"')
+        # Tip: set EDITOR env var to your preferred editor for Claude Code.
 
-    @staticmethod
     def _sanitize_env_value(value: str) -> str:
         """
         Strip characters that could break .env parsing or enable injection.

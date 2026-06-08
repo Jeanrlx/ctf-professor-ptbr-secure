@@ -1,4 +1,6 @@
+# Host-side dependencies for the MCP server only.
+# pwntools is intentionally NOT listed here — it is installed inside the
+# Docker sandbox (Dockerfile) to keep exploit-capable code off the host.
 mcp>=1.0.0
 fastmcp>=0.1.0
-pwntools>=4.12.0
 requests>=2.31.0
