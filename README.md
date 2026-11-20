@@ -136,7 +136,7 @@ O container Docker foi endurecido contra os principais vetores de ataque:
 
 ## Mantenedor
 
-**[Jean Rodrigues](https://www.linkedin.com/in/imjeanrodrigues)** — [@Jeanrlx](https://github.com/Jeanrlx)
+**Jean Rodrigues** — [@Jeanrlx](https://github.com/Jeanrlx)
 
 ---
 
