@@ -40,7 +40,7 @@ O sistema de agentes é instruído a proteger segredos, mas a responsabilidade f
 
 Se você encontrar uma falha de segurança no próprio **CTF Professor** (ex: um bypass nos guardrails dos agentes ou um problema no sandbox), por favor, reporte via:
 
-🔗 **LinkedIn**: [imjeanrodrigues](https://www.linkedin.com/in/imjeanrodrigues)
+🔗 **GitHub**: [reporte privado de vulnerabilidade](https://github.com/Jeanrlx/ctf-professor-ptbr-secure/security/advisories/new)
 
 ---
 
@@ -80,7 +80,7 @@ The agent system is instructed to protect secrets, but the ultimate responsibili
 
 If you find a security flaw in **CTF Professor** itself (e.g., a bypass in agent guardrails or a sandbox issue), please report it via:
 
-🔗 **LinkedIn**: [imjeanrodrigues](https://www.linkedin.com/in/imjeanrodrigues)
+🔗 **GitHub**: [private vulnerability report](https://github.com/Jeanrlx/ctf-professor-ptbr-secure/security/advisories/new)
 
 ---
 
